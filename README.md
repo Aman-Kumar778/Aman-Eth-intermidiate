@@ -1,12 +1,41 @@
-# Starter Next/Hardhat Project
+# Project Title
 
-After cloning the github, you will want to do the following to get the code running on your computer.
+Simple overview of use/purpose.
 
-1. Inside the project directory, in the terminal type: npm i
-2. Open two additional terminals in your VS code
-3. In the second terminal type: npx hardhat node
-4. In the third terminal, type: npx hardhat run --network localhost scripts/deploy.js
-5. Back in the first terminal, type npm run dev to launch the front-end.
+## Description
 
-After this, the project will be running on your localhost. 
-Typically at http://localhost:3000/
+An in-depth paragraph about your project and overview of use.
+
+## Getting Started
+
+### Installing
+
+* How/where to download your program
+* Any modifications needed to be made to files/folders
+
+### Executing program
+
+* How to run the program
+* Step-by-step bullets
+```
+code blocks for commands
+```
+
+## Help
+
+Any advise for common problems or issues.
+```
+command to run if program contains helper info
+```
+
+## Authors
+
+Contributors names and contact info
+
+ex. Dominique Pizzie  
+ex. [@DomPizzie](https://twitter.com/dompizzie)
+
+
+## License
+
+This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
