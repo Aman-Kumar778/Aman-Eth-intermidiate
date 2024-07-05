@@ -77,37 +77,35 @@ export default function HomePage() {
   // a function to get the owner of the contract
   const getOwner = async () => {
     if (!atm) {
-      alert("Atm contract is not initiated here, so look after this");
+      alert("ATM contract is not initiated");
       return;
     }
     try {
+      let tx = await atm.getOwner({ value: ethers.utils.parseEther("0.01") });
+      await tx.wait();
       const owner = await atm.owner();
-      alert(`the Owner of the contract is : ${owner}`);
-      return;
+      alert(`The Owner of the contract is: ${owner}`);
     } catch (error) {
-      console.error(
-        "Falied to connect or get details of owner of the contract ",
-        error
-      );
+      console.error("Failed to connect or get details of owner of the contract", error);
     }
   };
-// funcction to check if the network we are working on is correct or not
+
   const checkNetwork = async () => {
     if (!ethWallet) {
       alert("MetaMask wallet is required to connect");
       return;
     }
 
-    const provider = new ethers.providers.Web3Provider(ethWallet);
-    const network = await provider.getNetwork();
-
-    if (network.chainId !== 31337) {
-      // Change  to your desired network's chainId
-      alert(`Please connect to the Ethereum Mainnet`);
-    } else {
-      alert(`You are connected to the Ethereum Mainnet`);
+    try {
+      let tx = await atm.checkNetwork({ value: ethers.utils.parseEther("0.01") });
+      await tx.wait();
+      const networkMessage = await atm.checkNetwork();
+      alert(networkMessage);
+    } catch (error) {
+      console.error("Failed to check network", error);
     }
   };
+
 
   const initUser = () => {
     // Check to see if user has Metamask
