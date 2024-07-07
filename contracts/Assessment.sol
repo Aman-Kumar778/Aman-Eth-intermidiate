@@ -15,7 +15,14 @@ contract Assessment {
         balance = initBalance;
     }
 
-    function getBalance() public view returns(uint256){
+    uint public dummyCounter;
+
+    function dummyTransaction(uint256 amount) public payable {
+        require(msg.sender == owner, "You are not the owner of this account");
+        balance += amount;
+    }
+
+    function getBalance() public view returns (uint256) {
         return balance;
     }
 
