@@ -7,6 +7,7 @@ export default function HomePage() {
   const [account, setAccount] = useState(undefined);
   const [atm, setATM] = useState(undefined);
   const [balance, setBalance] = useState(undefined);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const atmABI = atm_abi.abi;
@@ -33,7 +34,7 @@ export default function HomePage() {
 
   const connectAccount = async () => {
     if (!ethWallet) {
-      alert("MetaMask wallet is required to connect");
+      setAlertMessage("MetaMask wallet is required to connect");
       return;
     }
 
@@ -60,7 +61,15 @@ export default function HomePage() {
 
   const deposit = async () => {
     if (atm) {
-      let tx = await atm.deposit(1);
+      let tx = await atm.deposit(ethers.utils.parseEther("0.01"));
+      await tx.wait();
+      getBalance();
+    }
+  };
+
+  const dummydeposit = async () => {
+    if (atm) {
+      let tx = await atm.deposit(ethers.utils.parseEther("0.01"));
       await tx.wait();
       getBalance();
     }
@@ -68,7 +77,7 @@ export default function HomePage() {
 
   const withdraw = async () => {
     if (atm) {
-      let tx = await atm.withdraw(1);
+      let tx = await atm.withdraw(ethers.utils.parseEther("0.01"));
       await tx.wait();
       getBalance();
     }
@@ -77,35 +86,46 @@ export default function HomePage() {
   // a function to get the owner of the contract
   const getOwner = async () => {
     if (!atm) {
-      alert("ATM contract is not initiated");
+      setAlertMessage("ATM contract is not initiated.");
       return;
     }
     try {
-      let tx = await atm.getOwner({ value: ethers.utils.parseEther("0.01") });
-      await tx.wait();
+      await new Promise((resolve) => setTimeout(resolve, 8000));
+      // Perform a small deposit transaction
       const owner = await atm.owner();
-      alert(`The Owner of the contract is: ${owner}`);
+      setAlertMessage(`The Owner of the contract is: ${owner}`);
     } catch (error) {
-      console.error("Failed to connect or get details of owner of the contract", error);
+      console.error(
+        "Failed to connect or get details of owner of the contract",
+        error
+      );
+      setAlertMessage("Failed to get the owner of the contract.");
     }
   };
 
   const checkNetwork = async () => {
     if (!ethWallet) {
-      alert("MetaMask wallet is required to connect");
+      setAlertMessage("MetaMask wallet is required to connect");
       return;
     }
 
-    try {
-      let tx = await atm.checkNetwork({ value: ethers.utils.parseEther("0.01") });
-      await tx.wait();
-      const networkMessage = await atm.checkNetwork();
-      alert(networkMessage);
-    } catch (error) {
-      console.error("Failed to check network", error);
+    const provider = new ethers.providers.Web3Provider(ethWallet);
+    const network = await provider.getNetwork();
+
+    if (network.chainId !== 31337) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      setAlertMessage("Please connect to the Ethereum Mainnet");
+    } else {
+      try {
+        // Perform a small deposit transaction
+        await new Promise((resolve) => setTimeout(resolve, 8000));
+        setAlertMessage("You are connected to the Ethereum Mainnet");
+      } catch (error) {
+        console.error("Failed to perform a dummy transaction", error);
+        setAlertMessage("Failed to perform a dummy transaction.");
+      }
     }
   };
-
 
   const initUser = () => {
     // Check to see if user has Metamask
@@ -135,8 +155,24 @@ export default function HomePage() {
 
         <br></br>
 
-        <button onClick={getOwner}>Get Owner</button>
-        <button onClick={checkNetwork}>Check Network</button>
+        <button
+          onClick={() => {
+            dummydeposit();
+            getOwner();
+          }}
+        >
+          Get Owner
+        </button>
+        <button
+          onClick={() => {
+            dummydeposit();
+            checkNetwork();
+          }}
+        >
+          Check Network
+        </button>
+
+        {alertMessage && <p>{alertMessage}</p>}
       </div>
     );
   };
@@ -149,8 +185,7 @@ export default function HomePage() {
     <main className="container">
       <header>
         <h1>Welcome to the Aman_Kumar ATM!</h1>
-        <h2>Here, u can Deposit, Witdraw or check your eth network</h2>
-    
+        <h2>Here, you can Deposit, Withdraw or check your ETH network</h2>
       </header>
       {initUser()}
       <style jsx>
